@@ -15,14 +15,14 @@ import io from 'socket.io-client';
 
 const Index = ({ username }) => {
   const [value, setValue] = useState('');
-  const [name, setName] = useState('Marlon');
+  const [num, setNum] = useState(0);
   const [typing, setTyping] = useState(false);
   const [messages, setMessages] = useState([]);
   const [socket, setSocket] = useState(null);
 
 
   useEffect(() => {
-    let skt = io('https://bate-papo-wow.herokuapp.com/')
+    let skt = io('http://192.168.15.13:3000/')
     setSocket(skt);
 
   }, [])
@@ -37,7 +37,11 @@ const Index = ({ username }) => {
       })
 
       socket.on('connected', data => {
-       Alert.alert(data)
+        setNum(String(data))
+      })
+
+      socket.on('disconnect', data => {
+        setNum(String(data))
       })
 
       socket.on('types', () => {
@@ -82,6 +86,7 @@ const Index = ({ username }) => {
           {messages?.map((msg, index) => <Text style={{ padding: 10, fontSize: 24, backgroundColor: index % 2 ? '#ddd' : '#fff' }} key={msg.name} >{msg.name} diz: {msg.msg}</Text>)}
         </ScrollView>
         {typing ? <Text style={{ color: 'grey', fontSize: 18 }}>Usuário digitando...</Text> : <View></View>}
+        <Text style={{ alignSelf: 'flex-end', paddingRight: 20}}>{num} usuários online</Text>
         <View style={styles.bottomView}>
           <TextInput
             onFocus={() => handleTyping()}
